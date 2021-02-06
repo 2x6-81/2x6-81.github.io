@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https:// 2x6-81.github.io</id>
+    <id>https://2x6-81.github.io</id>
     <title>2x6_81 的博客</title>
-    <updated>2020-12-22T15:57:47.870Z</updated>
+    <updated>2021-02-06T14:15:04.965Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https:// 2x6-81.github.io"/>
-    <link rel="self" href="https:// 2x6-81.github.io/atom.xml"/>
+    <link rel="alternate" href="https://2x6-81.github.io"/>
+    <link rel="self" href="https://2x6-81.github.io/atom.xml"/>
     <subtitle>もう一度、キミとつながるの物語</subtitle>
-    <logo>https:// 2x6-81.github.io/images/avatar.png</logo>
-    <icon>https:// 2x6-81.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, 2x6_81 的博客</rights>
+    <logo>https://2x6-81.github.io/images/avatar.png</logo>
+    <icon>https://2x6-81.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, 2x6_81 的博客</rights>
     <entry>
         <title type="html"><![CDATA[求和 (sum) 的题解]]></title>
-        <id>https:// 2x6-81.github.io/post/qiu-he-sum-de-ti-jie/</id>
-        <link href="https:// 2x6-81.github.io/post/qiu-he-sum-de-ti-jie/">
+        <id>https://2x6-81.github.io/post/qiu-he-sum-de-ti-jie/</id>
+        <link href="https://2x6-81.github.io/post/qiu-he-sum-de-ti-jie/">
         </link>
         <updated>2020-12-12T10:31:58.000Z</updated>
         <content type="html"><![CDATA[<h3 id="题目背景">题目背景</h3>
