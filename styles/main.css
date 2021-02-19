@@ -1078,20 +1078,20 @@ summary {
   margin: 0 8px;
 }
 .site-header-container {
-  position: fixed;
+  position: inherit;
   right: 0;
-  left: 0;
+  left: auto;
   z-index: 1024;
-  background: #fff;
+  background: #e7f1f1;
   height: 56px;
 }
 .site-header {
   height: 56px;
-  padding: 0 16px;
+  padding: 0 90px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 768px;
+  max-width: 1500px;
   margin: 0 auto;
   box-shadow: inset 0px -1px 0px #fafafa;
 }
@@ -1166,15 +1166,15 @@ a.purple-link {
   background: linear-gradient(180deg, transparent 70%, rgba(101, 125, 225, 0.4) 0);
 }
 .main {
-  max-width: 768px;
-  margin: 0 auto;
+  max-width: 1600px;
+  margin: 0 0 0 320px;
   display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
 .content-container {
   flex: 1;
-  padding: 48px 16px 32px;
+  padding: 48px 50px 32px;
 }
 .post-item {
   display: flex;
@@ -1458,4 +1458,32 @@ a.purple-link {
   border: 2px solid var(--c-base-purple);
   margin: 0 16px 16px 0;
   border-radius: 16px;
+}
+.sidebar1 {
+  width: 320px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #7c8280;
+  background-size: cover;
+  background-position: center;
+  background-image: url('../media/images/Honoka2.png');
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+}
+.sidebar2 {
+  width: 320px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #7c8280;
+  background-size: cover;
+  background-position: center;
+  background-image: url('../media/images/Nico1.png');
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
 }
