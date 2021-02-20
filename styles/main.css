@@ -1114,7 +1114,7 @@ summary {
   display: none;
   position: fixed;
   top: 56px;
-  left: 320;
+  left: 0;
   right: 0;
   bottom: 0;
   background: #fff;
@@ -1123,6 +1123,7 @@ summary {
   align-items: center;
   justify-content: center;
   z-index: 1024;
+  margin: inherit;
 }
 .menu-container .menu-list {
   display: inline-flex;
@@ -1171,6 +1172,15 @@ a.purple-link {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+}
+@media (max-width: 800px) {
+  .main {
+    max-width: 800px;
+    margin: 0 0 0 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
 }
 .content-container {
   flex: 1;
@@ -1486,4 +1496,13 @@ a.purple-link {
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
+}
+@media (max-width: 800px) {
+  .sidebar1 {
+    position: relative;
+    width: 100% !important;
+    height: 0px;
+    overflow: hidden;
+    transition: height 0.382s ease-in-out;
+  }
 }
