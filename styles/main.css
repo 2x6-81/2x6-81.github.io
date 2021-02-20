@@ -1173,6 +1173,15 @@ a.purple-link {
   min-height: 100vh;
   flex-direction: column;
 }
+@media (max-width: 1200px) {
+  .main {
+    max-width: 1200px;
+    margin: 0 0 0 310px;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+}
 @media (max-width: 800px) {
   .main {
     max-width: 800px;
@@ -1496,6 +1505,22 @@ a.purple-link {
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
+}
+@media (max-width: 1200px) {
+  .sidebar1 {
+    width: 310px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #7c8280;
+    background-size: cover;
+    background-position: center;
+    background-image: url('../media/images/Honoka2.jpg');
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+  }
 }
 @media (max-width: 800px) {
   .sidebar1 {
