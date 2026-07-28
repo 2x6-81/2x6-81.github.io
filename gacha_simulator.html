@@ -44,6 +44,38 @@
             font-size: 13px;
             margin-bottom: 30px;
         }
+        .visitor-counter {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 12px;
+            margin-top: -22px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .visitor-counter .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .visitor-counter .dot.offline {
+            background: #666;
+            animation: none;
+        }
+        .visitor-counter .num {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
         .section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
@@ -280,6 +312,10 @@
     <div class="container">
         <h1>✦ 抽卡模拟器</h1>
         <p class="subtitle">Blue Archive 卡池期望计算</p>
+        <div class="visitor-counter">
+            <span class="dot" id="statusDot"></span>
+            <span>访问人数 <span class="num" id="visitorCount">--</span></span>
+        </div>
 
         <div class="section">
             <div class="section-title">Up 角色列表</div>
@@ -506,6 +542,34 @@
                 clearBtn.disabled = false;
             }
         });
+
+        // --- Visitor counter ---
+
+        (function updateVisitorCount() {
+            const dot = document.getElementById('statusDot');
+            const countEl = document.getElementById('visitorCount');
+
+            // Show localStorage value immediately (no waiting)
+            let local = parseInt(localStorage.getItem('ba_sim_visits') || '0');
+            local++;
+            localStorage.setItem('ba_sim_visits', local.toString());
+            countEl.textContent = local.toLocaleString();
+            dot.className = 'dot offline';
+
+            // Try to get a shared count from API in background (short timeout)
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 2000);
+            fetch('https://api.countapi.xyz/hit/nanahira-ba-simulator/visits', { signal: ctrl.signal, mode: 'cors' })
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && typeof data.value === 'number') {
+                        countEl.textContent = data.value.toLocaleString();
+                        dot.className = 'dot';
+                    }
+                })
+                .catch(() => { /* keep localStorage value */ })
+                .finally(() => clearTimeout(timer));
+        })();
 
         // Initial render
         renderList();
