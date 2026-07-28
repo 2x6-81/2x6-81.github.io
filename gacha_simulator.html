@@ -396,11 +396,11 @@
             // New method
             for (let i = 0; i < pcnt; i++) {
                 for (const v of upCounts) {
-                    let tp = 0;
+                    let tp = 0, p = 0;
                     let remaining = v;
                     while (remaining--) {
                         for (;;) {
-                            tp++; p2 += need[tp];
+                            tp++; p++; p2 += need[p];
                             if ((tp === 100 && pull2() || tp !== 100 && pull()) || tp === 200) {
                                 tp = 0;
                                 break;
