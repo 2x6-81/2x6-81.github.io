@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽卡模拟器 - Blue Archive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 520px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .input-row input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-row input:focus {
+            border-color: #6c63ff;
+        }
+        .input-row input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .input-row input:disabled {
+            opacity: 0.5;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .btn-add {
+            background: rgba(108, 99, 255, 0.8);
+            color: #fff;
+        }
+        .btn-add:hover:not(:disabled) {
+            background: rgba(108, 99, 255, 1);
+        }
+        .btn-calc {
+            background: linear-gradient(135deg, #6c63ff, #e040fb);
+            color: #fff;
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            letter-spacing: 1px;
+            border-radius: 12px;
+        }
+        .btn-calc:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+        }
+        .btn-calc:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        .btn-calc.calculating {
+            background: linear-gradient(135deg, #444, #666);
+            pointer-events: none;
+        }
+        .btn-clear {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+        .btn-clear:hover:not(:disabled) {
+            background: rgba(255, 82, 82, 0.35);
+        }
+        .btn-remove {
+            background: rgba(255, 82, 82, 0.15);
+            color: #ff5252;
+            border: none;
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .btn-remove:hover {
+            background: rgba(255, 82, 82, 0.35);
+        }
+        .btn-remove:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .up-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 36px;
+        }
+        .up-list.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 13px;
+            min-height: 36px;
+        }
+        .up-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(108, 99, 255, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 8px;
+            padding: 4px 8px 4px 12px;
+            color: #c4bfff;
+            font-size: 14px;
+            font-weight: 500;
+            animation: fadeIn 0.2s ease;
+        }
+        .up-tag .star {
+            color: #ffd700;
+            font-size: 12px;
+        }
+        .up-tag .up-label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .result-area {
+            margin-top: 4px;
+        }
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+        }
+        .result-card:last-child {
+            margin-bottom: 0;
+        }
+        .result-label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .result-value {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .result-value .unit {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: 4px;
+        }
+        .result-value.old {
+            color: #64b5f6;
+        }
+        .result-value.new {
+            background: linear-gradient(135deg, #6c63ff, #e040fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .result-diff {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+        .result-diff.positive {
+            background: rgba(76, 175, 80, 0.15);
+            color: #66bb6a;
+        }
+        .result-status {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            padding: 20px 0;
+        }
+        .result-status .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #6c63ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error-msg {
+            color: #ff5252;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✦ 抽卡模拟器</h1>
+        <p class="subtitle">Blue Archive 卡池期望计算</p>
+
+        <div class="section">
+            <div class="section-title">Up 角色列表</div>
+            <div class="input-row">
+                <input type="number" id="upInput" min="1" max="2" placeholder="输入 1 或 2" autofocus>
+                <button class="btn btn-add" id="addBtn">添加</button>
+            </div>
+            <div id="upListContainer" class="up-list empty">点击上方添加 Up 角色</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                <span id="listSummary" style="color:rgba(255,255,255,0.3);font-size:12px;"></span>
+                <button class="btn btn-clear" id="clearBtn">清空列表</button>
+            </div>
+        </div>
+
+        <button class="btn btn-calc" id="calcBtn">计 算</button>
+
+        <div class="section result-area" id="resultArea">
+            <div class="section-title">模拟结果（50000 次模拟）</div>
+            <div id="resultContent">
+                <div class="result-status">等待计算...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const upList = [];
+
+        const upInput = document.getElementById('upInput');
+        const addBtn = document.getElementById('addBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const calcBtn = document.getElementById('calcBtn');
+        const upListContainer = document.getElementById('upListContainer');
+        const listSummary = document.getElementById('listSummary');
+        const resultContent = document.getElementById('resultContent');
+
+        // --- Gacha logic ---
+
+        function pull() {
+            return Math.random() < 0.007;
+        }
+
+        function pull2() {
+            return Math.random() < 0.5;
+        }
+
+        function buildNeed() {
+            const give10 = [70, 130, 150, 170, 270, 330, 350, 370];
+            const need = new Array(405);
+            for (let i = 0; i <= 400; i++) need[i] = 1;
+            for (let i = 0; i < 8; i++) {
+                for (let j = 1; j <= 10; j++) need[give10[i] + j] = 0;
+            }
+            return need;
+        }
+
+        const need = buildNeed();
+
+        function simulate(upCounts) {
+            const pcnt = 50000;
+            let p1 = 0, p2 = 0;
+
+            // Old method
+            for (let i = 0; i < pcnt; i++) {
+                for (const v of upCounts) {
+                    let tp = 0;
+                    let remaining = v;
+                    while (remaining--) {
+                        if (tp === 200) { tp = 0; continue; }
+                        for (;;) {
+                            tp++; p1++;
+                            if (pull()) break;
+                            if (tp === 200) { tp = 0; break; }
+                        }
+                    }
+                }
+            }
+
+            // New method
+            for (let i = 0; i < pcnt; i++) {
+                for (const v of upCounts) {
+                    let tp = 0;
+                    let remaining = v;
+                    while (remaining--) {
+                        for (;;) {
+                            tp++; p2 += need[tp];
+                            if ((tp === 100 && pull2() || tp !== 100 && pull()) || tp === 200) {
+                                tp = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return { old: p1 / pcnt, new: p2 / pcnt };
+        }
+
+        // --- UI ---
+
+        function renderList() {
+            if (upList.length === 0) {
+                upListContainer.className = 'up-list empty';
+                upListContainer.textContent = '点击上方添加 Up 角色';
+                listSummary.textContent = '';
+                return;
+            }
+            upListContainer.className = 'up-list';
+            upListContainer.innerHTML = '';
+            for (let i = 0; i < upList.length; i++) {
+                const tag = document.createElement('div');
+                tag.className = 'up-tag';
+                const stars = '★'.repeat(upList[i]);
+                tag.innerHTML = `
+                    <span class="star">${stars}</span>
+                    <span class="up-label">Up${i + 1}</span>
+                    <span>×${upList[i]}</span>
+                    <button class="btn-remove" data-index="${i}" ${calcBtn.disabled ? 'disabled' : ''}>✕</button>
+                `;
+                upListContainer.appendChild(tag);
+            }
+            // bind remove events
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    upList.splice(idx, 1);
+                    renderList();
+                });
+            });
+            const total = upList.reduce((a, b) => a + b, 0);
+            listSummary.textContent = `${upList.length} 个角色，共 ${total} 个目标`;
+        }
+
+        function addUp() {
+            const val = parseInt(upInput.value);
+            if (isNaN(val) || val < 1 || val > 2) {
+                showError('请输入 1 或 2');
+                return;
+            }
+            hideError();
+            upList.push(val);
+            upInput.value = '';
+            upInput.focus();
+            renderList();
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('inputError') || (() => {
+                const el = document.createElement('div');
+                el.id = 'inputError';
+                el.className = 'error-msg';
+                upInput.parentNode.appendChild(el);
+                return el;
+            })();
+            err.textContent = msg;
+            err.classList.add('show');
+        }
+
+        function hideError() {
+            const err = document.getElementById('inputError');
+            if (err) err.classList.remove('show');
+        }
+
+        upInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addBtn.click();
+        });
+
+        addBtn.addEventListener('click', addUp);
+
+        clearBtn.addEventListener('click', () => {
+            upList.length = 0;
+            renderList();
+        });
+
+        calcBtn.addEventListener('click', async () => {
+            if (upList.length === 0) {
+                resultContent.innerHTML = `<div class="result-status" style="color:#ff5252;">请添加至少一个 Up 角色</div>`;
+                return;
+            }
+
+            calcBtn.disabled = true;
+            calcBtn.textContent = '计 算 中...';
+            calcBtn.classList.add('calculating');
+            addBtn.disabled = true;
+            clearBtn.disabled = true;
+
+            resultContent.innerHTML = `
+                <div class="result-status">
+                    <span class="spinner"></span>
+                    模拟进行中 (50000 次)...
+                </div>
+            `;
+
+            // Yield to let UI update
+            await new Promise(r => setTimeout(r, 50));
+
+            try {
+                const result = simulate(upList);
+
+                const improved = result.old > 0 ? ((result.new - result.old) / result.old * 100) : 0;
+                const diffClass = improved > 0 ? 'positive' : '';
+
+                resultContent.innerHTML = `
+                    <div class="result-card">
+                        <div class="result-label">旧机制 · 平均抽数</div>
+                        <div class="result-value old">${result.old.toFixed(2)}<span class="unit">抽</span></div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">新机制 · 平均抽数</div>
+                        <div class="result-value new">${result.new.toFixed(2)}<span class="unit">抽</span></div>
+                    </div>
+                    <div style="text-align:center;margin-top:12px;">
+                        <span class="result-diff ${diffClass}">
+                            ${improved > 0 ? '▼' : '▲'} 优化 ${Math.abs(improved).toFixed(1)}%
+                        </span>
+                    </div>
+                `;
+            } catch (e) {
+                resultContent.innerHTML = `<div class="result-status" style="color:#ff5252;">计算出错: ${e.message}</div>`;
+            } finally {
+                calcBtn.disabled = false;
+                calcBtn.textContent = '计 算';
+                calcBtn.classList.remove('calculating');
+                addBtn.disabled = false;
+                clearBtn.disabled = false;
+            }
+        });
+
+        // Initial render
+        renderList();
+    </script>
+</body>
+</html>
