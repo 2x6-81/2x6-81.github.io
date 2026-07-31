@@ -320,7 +320,7 @@
         <div class="section">
             <div class="section-title">Up 角色列表</div>
             <div class="input-row">
-                <input type="number" id="upInput" min="1" max="2" placeholder="输入 1 或 2" autofocus>
+                <input type="number" id="upInput" min="1" max="5" placeholder="输入 1~5" autofocus>
                 <button class="btn btn-add" id="addBtn">添加</button>
             </div>
             <div id="upListContainer" class="up-list empty">点击上方添加 Up 角色</div>
@@ -375,32 +375,38 @@
 
         function simulate(upCounts) {
             const pcnt = 50000;
-            let p1 = 0, p2 = 0;
+            let mean1 = 0, S1 = 0;
+            let mean2 = 0, S2 = 0;
 
             // Old method
-            for (let i = 0; i < pcnt; i++) {
+            for (let i = 1; i <= pcnt; i++) {
+                let pulls = 0;
                 for (const v of upCounts) {
                     let tp = 0;
                     let remaining = v;
                     while (remaining--) {
                         if (tp === 200) { tp = 0; continue; }
                         for (;;) {
-                            tp++; p1++;
+                            tp++; pulls++;
                             if (pull()) break;
                             if (tp === 200) { tp = 0; break; }
                         }
                     }
                 }
+                const delta = pulls - mean1;
+                mean1 += delta / i;
+                S1 += delta * (pulls - mean1);
             }
 
             // New method
-            for (let i = 0; i < pcnt; i++) {
+            for (let i = 1; i <= pcnt; i++) {
+                let pulls = 0;
                 for (const v of upCounts) {
                     let tp = 0, p = 0;
                     let remaining = v;
                     while (remaining--) {
                         for (;;) {
-                            tp++; p++; p2 += need[p];
+                            tp++; p++; pulls += (p > 400 || need[p]);
                             if ((tp === 100 && pull2() || tp !== 100 && pull()) || tp === 200) {
                                 tp = 0;
                                 break;
@@ -408,9 +414,14 @@
                         }
                     }
                 }
+                const delta = pulls - mean2;
+                mean2 += delta / i;
+                S2 += delta * (pulls - mean2);
             }
 
-            return { old: p1 / pcnt, new: p2 / pcnt };
+            const var1 = S1 / pcnt, sd1 = Math.sqrt(var1);
+            const var2 = S2 / pcnt, sd2 = Math.sqrt(var2);
+            return { old: mean1, new: mean2, var1, var2, sd1, sd2 };
         }
 
         // --- UI ---
@@ -450,8 +461,8 @@
 
         function addUp() {
             const val = parseInt(upInput.value);
-            if (isNaN(val) || val < 1 || val > 2) {
-                showError('请输入 1 或 2');
+            if (isNaN(val) || val < 1 || val > 5) {
+                showError('请输入 1 ~ 5');
                 return;
             }
             hideError();
@@ -521,10 +532,16 @@
                     <div class="result-card">
                         <div class="result-label">旧机制 · 平均抽数</div>
                         <div class="result-value old">${result.old.toFixed(2)}<span class="unit">抽</span></div>
+                        <div style="color:rgba(100,181,246,0.5);font-size:12px;margin-top:4px;">
+                            σ²=${result.var1.toFixed(1)} &nbsp; σ=${result.sd1.toFixed(2)}
+                        </div>
                     </div>
                     <div class="result-card">
                         <div class="result-label">新机制 · 平均抽数</div>
                         <div class="result-value new">${result.new.toFixed(2)}<span class="unit">抽</span></div>
+                        <div style="color:rgba(224,64,251,0.5);font-size:12px;margin-top:4px;">
+                            σ²=${result.var2.toFixed(1)} &nbsp; σ=${result.sd2.toFixed(2)}
+                        </div>
                     </div>
                     <div style="text-align:center;margin-top:12px;">
                         <span class="result-diff ${diffClass}">
